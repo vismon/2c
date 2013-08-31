@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+       "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Kontakte Konverter</title>
+		<!-- Frontend VERSION 0.1 -->
+	</head>
+	<body>
+		<script src="js/jquery-unpacked.js"></script>
+		<script src="js/index.js"></script>
+		<div id="upload">
+			<h2>Hier k&ouml;nnen Sie Ihre Kontakte-Datei hochladen.</h2>
+			<form action="" enctype="multipart/form-data"  method="post">
+				<input name="file" type="file" id="fileA" onchange="fileChange();"/>
+				<input name="upload" value="Upload" type="button" onclick="uploadFile();" />
+				<input name="abort" value="Abbrechen" type="button" onclick="uploadAbort();" />
+			</form>
+			<div>
+				<div id="fileName"></div>
+				<div id="fileType"></div>
+				<progress id="progress" style="margin-top:10px" value="0"></progress>
+					<span id="prozent">0%</span>
+			</div>
+			<div id="ul-result"></div>
+			<table id="ul-table"><thead><tr><td>Dateiname</td><td>Aktion</td><td>Download</td></tr></thead></table>
+	</body>
+</html>

@@ -1,0 +1,2 @@
+# Public _CGI-BIN_
+Options +ExecCGI -Indexes
