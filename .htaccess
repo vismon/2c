@@ -1,0 +1,3 @@
+# _ROOT_
+Options +ExecCGI -Indexes
+Allow from None
