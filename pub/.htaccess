@@ -1,12 +1,13 @@
 # Public _ROOT_
 Options -ExecCGI -Indexes
 DirectoryIndex index.html
+Allow from All
 
 # der nun folgende Pfad ist nicht so krude wie er wirkt... 
 # die Datei error.html liegt im Verzeichnis /usr/share/contact/pub
 # /contact ist ein Symlink: /var/www/contact/ --> /usr/share/contact/pub
-ErrorDocument 403 /contact/error.html
-ErrorDocument 404 /contact/error.html
-ErrorDocument 500 /contact/error.html
+ErrorDocument 403 /2c/error.html
+ErrorDocument 404 /2c/error.html
+ErrorDocument 500 /2c/error.html
 
 

@@ -11,17 +11,19 @@ function fileChange()
 
 		if ((file.type == "") || (file.type.search(/text/i) != -1) || (file.type.search(/excel/i) != -1 ))
 		{
-			document.getElementById("fileType").innerHTML = 'Dateitype: ' + file.type;
-			document.getElementById("fileName").innerHTML = 'Dateiname: ' + file.name;
-			document.getElementById("progress").value = 0;
-			document.getElementById("prozent").innerHTML = "0%";
+			$("#fileType").text('Dateitype: ' + file.type);
+			$("#fileName").text('Dateiname: ' + file.name);
+			$("#progress").progressbar('value',0);
+			$("#prozent").text = "0%";
 			return;
 		}
 		else
 		{
 			alert("Dateityp: \n" + file.type + "\n ungueltig! Bitte laden Sie eine CSV, LDIF oder Testdatei hoch!")
 		}
-	} 
+	}
+ 
+// globale Variable: der client bzw. 
 var client = null;
 function uploadFile()
 	{
@@ -133,6 +135,8 @@ function uploadAbort() {
 		//Briecht die aktuelle uebertragung ab
 		client.abort();
 	}
+
+
 
 function countString(str, search){
 	var count = 0;

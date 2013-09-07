@@ -3,26 +3,39 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Kontakte Konverter</title>
+		<title>2C - Konverter</title>
 		<!-- Frontend VERSION 0.1 -->
 	</head>
 	<body>
 		<script src="js/jquery-unpacked.js"></script>
 		<script src="js/index.js"></script>
 		<div id="upload">
-			<h2>Hier k&ouml;nnen Sie Ihre Kontakte-Datei hochladen.</h2>
+			<h1>2C</h1>
+			<p>Kurzanleitung:
+				<ul>
+					<li>Laden Sie Ihre exportieren Kontakte-Dateien Hoch - M&ouml;gliche Formate: LDIF,CSV und MAB (Mork)</li>
+					<li>&Uuml;berpr&uuml;fen Sie Ihre Kontakte-Liste auf Vollst&auml;ndigkeit.</li>
+					<li>Klicken Sie auf "Konvertieren" und w&auml;hlen Sie ggf. Optionen aus.</li>
+					<li>Laden Sie Ihre Fertige MS Outlook CSV-Datei herunter und speichern Sie diese Auf Ihrem Computer</li>
+					<li>Importieren Sie die CSV-Datei in Ihrem MS Outlook.</li>
+				</ul>
+			</p>
 			<form action="" enctype="multipart/form-data"  method="post">
 				<input name="file" type="file" id="fileA" onchange="fileChange();"/>
 				<input name="upload" value="Upload" type="button" onclick="uploadFile();" />
 				<input name="abort" value="Abbrechen" type="button" onclick="uploadAbort();" />
 			</form>
-			<div>
+			<div class="container">
 				<div id="fileName"></div>
 				<div id="fileType"></div>
 				<progress id="progress" style="margin-top:10px" value="0"></progress>
 					<span id="prozent">0%</span>
 			</div>
 			<div id="ul-result"></div>
-			<table id="ul-table"><thead><tr><td>Dateiname</td><td>Aktion</td><td>Download</td></tr></thead></table>
+			<div id="files-table">
+				<table id="ul-table" style="display: none;">
+					<thead><tr><td>Dateiname</td><td>Aktion</td><td>Download</td></tr></thead>
+				</table>
+			</div>
 	</body>
 </html>
