@@ -9,6 +9,86 @@
 	<body>
 		<script src="js/jquery-unpacked.js"></script>
 		<script src="js/index.js"></script>
+		<!-- Third party script for BrowserPlus runtime (Google Gears included in Gears runtime now) -->
+		<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+
+		<!-- Load plupload and all it's runtimes and finally the jQuery queue widget -->
+		<script type="text/javascript" src="js/plupload/js/plupload.full.js"></script>
+
+		<script type="text/javascript">
+		// Custom example logic
+$(function() {
+	var uploader = new plupload.Uploader({
+		runtimes : 'gears,html5,flash,silverlight,browserplus',
+		browse_button : 'pickfiles',
+		container : 'container',
+		max_file_size : '10mb',
+		url : 'cgi-bin/ul.py',
+		flash_swf_url : 'js/plupload/js/plupload.flash.swf',
+		silverlight_xap_url : 'js/plupload/js/plupload.silverlight.xap',
+		filters : [
+			{title : "LDIF Dateien", extensions : "ldif"},
+			{title : "CSV Dateien", extensions : "csv,txt"},
+			{title : "MAB Dateien", extensions : "mab"}
+		],
+		resize : {width : 320, height : 240, quality : 90}
+	});
+
+	uploader.bind('Init', function(up, params) {
+		//Die Anzeige der runtime-Version ist nett, aber unsinnig fuer uns...
+		//$('#filelist').html("<div>Current runtime: " + params.runtime + "</div>");
+		//
+		//Damit aber die Fehlermeldung verschwindet und die Benutzer gleich bescheid bekommen... 
+		//lass ich die Dateiliste leer initialisieren
+		$('#filelist').html('<table id="filestable"> <thead> <tr> <td>Dateiname</td> <td>Dateigr&ouml;&szlig;e</td> <td>Fortschritt</td> <td>Aktion</td> </tr></thead>')
+	});
+
+	$('#uploadfiles').click(function(e) {
+		uploader.start();
+		e.preventDefault();
+	});
+
+	uploader.init();
+
+	uploader.bind('FilesAdded', function(up, files) 
+		{
+		$.each(files, function(i, file) 
+				{
+					$('#filestable').append
+					(
+						'<tr id="' + file.id + '">' +
+						'<td>' + file.name + '</td>' +
+						'<td> ' + plupload.formatSize(file.size) + '</td>' +
+						'<td><b></b></td>' +
+						'<td id="' + file.id + '-action"></td>);'
+					)
+				}
+			);
+		up.refresh(); // Reposition Flash/Silverlight
+		});
+
+	uploader.bind('UploadProgress', function(up, file) {
+		$('#' + file.id + " b").html(file.percent + "%");
+	});
+
+	uploader.bind('Error', function(up, err) {
+		$('#filelist').append("<div>Error: " + err.code +
+			", Message: " + err.message +
+			(err.file ? ", Datei: " + err.file.name : "") +
+			"</div>"
+		);
+
+		up.refresh(); // Reposition Flash/Silverlight
+	});
+
+	uploader.bind('FileUploaded', function(up, file) {
+		$('#' + file.id + " b").html("100%");
+		$('#' + file.id + '-action').html('<a onclick="convertAndShow(' + file.name + ')" href="#">Kontakte anzeigen</a>');
+	});
+});
+</script>
+				
 		<div id="upload">
 			<h1>2C</h1>
 			<p>Kurzanleitung:
@@ -20,6 +100,13 @@
 					<li>Importieren Sie die CSV-Datei in Ihrem MS Outlook.</li>
 				</ul>
 			</p>
+			<div id="container">
+			<div id="filelist">Ihr Browser ist m&ouml;glicherweise zu alt f&uuml;r diese Webseite. (no runtime found)</div>
+			<br />
+			<a id="pickfiles" href="#">Datei Ausw&auml;hlen</a>
+			<a id="uploadfiles" href="#">Datei(en) hochladen</a>
+			</div>
+<!--
 			<form action="" enctype="multipart/form-data"  method="post">
 				<input name="file" type="file" id="fileA" onchange="fileChange();"/>
 				<input name="upload" value="Upload" type="button" onclick="uploadFile();" />
@@ -37,5 +124,6 @@
 					<thead><tr><td>Dateiname</td><td>Aktion</td><td>Download</td></tr></thead>
 				</table>
 			</div>
+-->
 	</body>
 </html>
