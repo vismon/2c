@@ -3,94 +3,166 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>2C - Konverter</title>
+		<title>2cl</title>
 		<!-- Frontend VERSION 0.1 -->
 	</head>
 	<body>
-		<script src="js/jquery-unpacked.js"></script>
-		<script src="js/index.js"></script>
+
 		<!-- Third party script for BrowserPlus runtime (Google Gears included in Gears runtime now) -->
-		<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js">			</script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js">	</script> 
 
-		<!-- Load plupload and all it's runtimes and finally the jQuery queue widget -->
-		<script type="text/javascript" src="js/plupload/js/plupload.full.js"></script>
+		<!-- Third party script ... Load plupload and all it's runtimes and finally the jQuery queue widget -->
+		<script type="text/javascript" src="js/plupload/js/plupload.full.js">					</script>
 
+		<!-- Load csvToTable jquery plugin-->
+		<script type="text/javascript" src="js/csvtotable/js/jquery.csvToTable.js">				</script> 
+
+		<!-- jQuery -->
+<!--		<script type="text/javascript" src="js/jquery-unpacked.js">						</script>-->
+
+		<!-- some other code -->
+		<script type="text/javascript" src="js/index.js">							</script>
 		<script type="text/javascript">
-		// Custom example logic
-$(function() {
-	var uploader = new plupload.Uploader({
-		runtimes : 'gears,html5,flash,silverlight,browserplus',
-		browse_button : 'pickfiles',
-		container : 'container',
-		max_file_size : '10mb',
-		url : 'cgi-bin/ul.py',
-		flash_swf_url : 'js/plupload/js/plupload.flash.swf',
-		silverlight_xap_url : 'js/plupload/js/plupload.silverlight.xap',
-		filters : [
-			{title : "LDIF Dateien", extensions : "ldif"},
-			{title : "CSV Dateien", extensions : "csv,txt"},
-			{title : "MAB Dateien", extensions : "mab"}
-		],
-		resize : {width : 320, height : 240, quality : 90}
-	});
+		$(function() {
+			var uploader = new plupload.Uploader({
+				runtimes : 'gears,html5,flash,silverlight,browserplus',
+				browse_button : 'pickfiles',
+				container : 'container',
+				max_file_size : '100mb',
+				url : 'cgi-bin/ul.php',
+				flash_swf_url : 'js/plupload/js/plupload.flash.swf',
+				silverlight_xap_url : 'js/plupload/js/plupload.silverlight.xap',
+				unique_names : true,
+				filters : [
+					{title : "LDIF Dateien", extensions : "ldif"},
+					{title : "CSV Dateien", extensions : "csv,txt"},
+					{title : "MAB Dateien", extensions : "mab"}
+				],
+				resize : {width : 500, height : 500, quality : 100}
+				});
 
-	uploader.bind('Init', function(up, params) {
-		//Die Anzeige der runtime-Version ist nett, aber unsinnig fuer uns...
-		//$('#filelist').html("<div>Current runtime: " + params.runtime + "</div>");
-		//
-		//Damit aber die Fehlermeldung verschwindet und die Benutzer gleich bescheid bekommen... 
-		//lass ich die Dateiliste leer initialisieren
-		$('#filelist').html('<table id="filestable"> <thead> <tr> <td>Dateiname</td> <td>Dateigr&ouml;&szlig;e</td> <td>Fortschritt</td> <td>Aktion</td> </tr></thead>')
-	});
+			uploader.bind('Init', function(up, params) {
+				//Die Anzeige der runtime-Version ist nett, aber unsinnig fuer uns...
+				//$('#filelist').html("<div>Current runtime: " + params.runtime + "</div>");
+				//
+				//Damit aber die Fehlermeldung verschwindet und die Benutzer gleich bescheid bekommen... 
+				//lass ich die Dateiliste leer initialisieren
+				$('#filelist').html('<table id="filestable"> <thead> ' +
+							'<tr> <td>Dateiname</td> ' +
+							'<td>Dateigr&ouml;&szlig;e</td> ' + 
+							'<td>Fortschritt</td> ' +
+							'<td>Aktion</td> </tr></thead>');
+				//Make the Table invisible ... 
+				$('#filelist').hide();
+				});
 
-	$('#uploadfiles').click(function(e) {
-		uploader.start();
-		e.preventDefault();
-	});
+/*			function patchName(file){
+				file.target_name = file.id + "-" + file.name;
+				return file;
+    			}*/
 
-	uploader.init();
+			$('#uploadfiles').click(function(e) {
+				uploader.start();
+				e.preventDefault();
+			});
 
-	uploader.bind('FilesAdded', function(up, files) 
-		{
-		$.each(files, function(i, file) 
+			uploader.init();
+
+			uploader.bind('FilesAdded', function(up, files) 
 				{
-					$('#filestable').append
-					(
-						'<tr id="' + file.id + '">' +
-						'<td>' + file.name + '</td>' +
-						'<td> ' + plupload.formatSize(file.size) + '</td>' +
-						'<td><b></b></td>' +
-						'<td id="' + file.id + '-action"></td>);'
-					)
-				}
-			);
-		up.refresh(); // Reposition Flash/Silverlight
+				//Show the Table header
+				$('#filelist').show();
+
+				//Add table row
+				$.each(files, function(i, file) 
+						{
+							//Add value row
+							$('#filestable').append
+							(
+								'<tr>' +
+								'<td>' + file.name + '</td>' +
+								'<td> ' + plupload.formatSize(file.size) + '</td>' +
+								'<td><b></b></td>' +
+								'<td id="' + file.id + '-action"></td>' +
+								'</tr>'
+							);
+
+							//Add placeholder row for resultSet
+							$('#filestable').append
+                                                        (
+                                                                '<tr id="' + file.id + '-resultRow">' +
+                                                                '<td id="' + file.id + '-resultSet" colspan="2"></td>' +
+                                                                '</tr>'
+                                                        );
+
+							//Hide the placeholder row
+							$('#' + file.id + '-resultRow').hide();
+						}
+				);
+				up.refresh(); // Reposition Flash/Silverlight
+				});
+
+			uploader.bind('UploadProgress', function(up, file) {
+				$('#' + file.id + " b").html(file.percent + "%");
+				});
+
+			uploader.bind('Error', function(up, err) {
+				$('#filelist').append("<div>Error: " + err.code +
+					", Message: " + err.message +
+					(err.file ? ", Datei: " + err.file.name : "") +
+					"</div>"
+				);
+
+				up.refresh(); // Reposition Flash/Silverlight
+				});
+
+			uploader.bind('FileUploaded', 
+				function(up, file)
+					//file has been uploaded sucessfully
+					{
+					//give our user some information about the process
+					$('#' + file.id + " b").html("100%");
+					$('#' + file.id + '-action').html('Verarbeite...');
+
+					//send the filename to the server to process the file
+					$('#' + file.id + '-action').load("cgi-bin/process.py", { filename: file.target_name },
+						function(file) 
+							//file has been processed successfully:
+							{
+							$('#' + file.id + '-action').html('Ergebnis ansehen');
+
+							//load file content, convert to html and fill html in the hidden row
+							$('#' + file.id + '-resultSet').CSVToTable('files-to-download/' + file.target_name, { loadingText: 'Lade CSV Daten... Bitte warten.' });
+							//the user has clicked the "let me see"-button 
+							$( '#' + file.id + '-action' ).click(
+								function(file)
+									{
+
+									if ( $('#' + file.id + '-resultRow').is( ":hidden" ) ) {
+										$('#' + file.id + '-resultRow').slideDown( 'fast',
+										function(file)
+											{
+											// Animation complete.
+											$('#' + file.id + '-action').html('Kontakte verbergen');
+											})
+									} else {
+										$('#' + file.id + '-resultRow').slideUp( 'fast',
+										function(file)
+											{
+											// Animation complete.
+											$('#' + file.id + '-action').html('Kontakte anzeigen');
+											});
+									}
+
+									});
+					   		});
+					});
 		});
-
-	uploader.bind('UploadProgress', function(up, file) {
-		$('#' + file.id + " b").html(file.percent + "%");
-	});
-
-	uploader.bind('Error', function(up, err) {
-		$('#filelist').append("<div>Error: " + err.code +
-			", Message: " + err.message +
-			(err.file ? ", Datei: " + err.file.name : "") +
-			"</div>"
-		);
-
-		up.refresh(); // Reposition Flash/Silverlight
-	});
-
-	uploader.bind('FileUploaded', function(up, file) {
-		$('#' + file.id + " b").html("100%");
-		$('#' + file.id + '-action').html('<a onclick="convertAndShow(' + file.name + ')" href="#">Kontakte anzeigen</a>');
-	});
-});
 </script>
 				
 		<div id="upload">
-			<h1>2C</h1>
+			<img src='img/2cl.PNG' width='93' height='113' />
 			<p>Kurzanleitung:
 				<ul>
 					<li>Laden Sie Ihre exportieren Kontakte-Dateien Hoch - M&ouml;gliche Formate: LDIF,CSV und MAB (Mork)</li>
@@ -103,27 +175,8 @@ $(function() {
 			<div id="container">
 			<div id="filelist">Ihr Browser ist m&ouml;glicherweise zu alt f&uuml;r diese Webseite. (no runtime found)</div>
 			<br />
-			<a id="pickfiles" href="#">Datei Ausw&auml;hlen</a>
-			<a id="uploadfiles" href="#">Datei(en) hochladen</a>
+			<a id="pickfiles" href="#"><img src='img/add.png' width='142' height='42'/></a>
+			<a id="uploadfiles" href="#"><img src='img/ul.png' width='142' height='42'/></a>
 			</div>
-<!--
-			<form action="" enctype="multipart/form-data"  method="post">
-				<input name="file" type="file" id="fileA" onchange="fileChange();"/>
-				<input name="upload" value="Upload" type="button" onclick="uploadFile();" />
-				<input name="abort" value="Abbrechen" type="button" onclick="uploadAbort();" />
-			</form>
-			<div class="container">
-				<div id="fileName"></div>
-				<div id="fileType"></div>
-				<progress id="progress" style="margin-top:10px" value="0"></progress>
-					<span id="prozent">0%</span>
-			</div>
-			<div id="ul-result"></div>
-			<div id="files-table">
-				<table id="ul-table" style="display: none;">
-					<thead><tr><td>Dateiname</td><td>Aktion</td><td>Download</td></tr></thead>
-				</table>
-			</div>
--->
 	</body>
 </html>
