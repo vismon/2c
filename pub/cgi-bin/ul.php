@@ -17,14 +17,11 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 // Settings
-$targetDir = '../../uploaded-files';
-// treeview:
-// App	-/
-// 	-/pub - public web root
-//	-/uploaded-files
-//	-...
+// first argument is the path and the second TRUE stands for recursive CONFIG-Arrey structure
+$CONFIG = parse_ini_file("../../config/2cl.ini",true);
+$targetDir = $CONFIG['PATH']['UPLOAD'];
 
-$cleanupTargetDir = false; // don't remove old files... cron does it for you
+$cleanupTargetDir = false; // don't remove old files... cron does it for us
 $maxFileAge = 3600; // Temp file age in seconds
 
 // 5 minutes execution time

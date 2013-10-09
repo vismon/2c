@@ -1,6 +1,3 @@
-function convertAndShow(filename) {
-	return true
-}
 function countString(str, search){
 	var count = 0;
 	var index = str.indexOf(search);
@@ -10,4 +7,3 @@ function countString(str, search){
 		}
 	return count;
 	}
-
